@@ -94,14 +94,11 @@ void Array1::generater(int e) {
 	}
 
 	while (starts.size()) {
-		srand((unsigned)time(NULL));
-
-		//randomly pick a start
-		int startsize = starts.size();
-		int randstart = rand() % startsize;
-		point start = starts[randstart];
+		//srand((unsigned)time(NULL));
+		point start = starts[0];
 
 		FindBlock(start.x, start.y);
+		int counter = 1;
 
 		while (walls.size()) {
 			//randomly pick walls
@@ -111,41 +108,51 @@ void Array1::generater(int e) {
 			point selectwall = walls[randnum];
 			point selectwall2 = selectwall;
 
-			//based on the direction of current location and the 1st wall location
-			//located the 2nd wall
-			switch (selectwall.direction) {
-			case 1: //up
-				selectwall2.x--; break;
-			case 2: //down
-				selectwall2.x++; break;
-			case 3: //left
-				selectwall2.y--; break;
-			case 4: //right
-				selectwall2.y++; break;
-			}
-
-			//if the 2nd wall is bondray
-			//ignore it
-			if (selectwall.x != width - 1 && selectwall.x != 0 &&
-				selectwall.y != length - 1 && selectwall.y != 0) {
-				if (selectwall2.x == width - 1 || selectwall2.x == 0 ||
-					selectwall2.y == length - 1 || selectwall2.y == 0) {
+			if (counter == 1) {
+				if (selectwall.x != width - 1 && selectwall.x != 0 &&
+					selectwall.y != length - 1 && selectwall.y != 0) {
 					storage[selectwall.x][selectwall.y] = ' ';
 					FindBlock(selectwall.x, selectwall.y);
+					//walls.erase(walls.begin() + randnum);
+					counter++;
 				}
-				//if both of them are walls, 'X'
-				//make them into empty ' '
-				else if (storage[selectwall2.x][selectwall2.y] == 'X') {
-					storage[selectwall.x][selectwall.y] = ' ';
-					storage[selectwall2.x][selectwall2.y] = ' ';
-					FindBlock(selectwall2.x, selectwall2.y);
+			}
+			else {
+				//based on the direction of current location and the 1st wall location
+				//located the 2nd wall
+				switch (selectwall.direction) {
+				case 1: //up
+					selectwall2.x--; break;
+				case 2: //down
+					selectwall2.x++; break;
+				case 3: //left
+					selectwall2.y--; break;
+				case 4: //right
+					selectwall2.y++; break;
 				}
 
+				//if the 2nd wall is bondray
+				//ignore it
+				if (selectwall.x != width - 1 && selectwall.x != 0 &&
+					selectwall.y != length - 1 && selectwall.y != 0) {
+					if (selectwall2.x == width - 1 || selectwall2.x == 0 ||
+						selectwall2.y == length - 1 || selectwall2.y == 0) {
+						storage[selectwall.x][selectwall.y] = ' ';
+						FindBlock(selectwall.x, selectwall.y);
+					}
+					//if both of them are walls, 'X'
+					//make them into empty ' '
+					else if (storage[selectwall2.x][selectwall2.y] == 'X') {
+						storage[selectwall.x][selectwall.y] = ' ';
+						storage[selectwall2.x][selectwall2.y] = ' ';
+						FindBlock(selectwall2.x, selectwall2.y);
+					}
+				}
 			}
 			//erase this one in the vector
 			walls.erase(walls.begin() + randnum);
-		}
-		starts.erase(starts.begin() + randstart);
+		}	
+		starts.erase(starts.begin());
 	}
 
 	//draw center/end

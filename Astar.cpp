@@ -100,8 +100,8 @@ PathPoint* Astar::isinlist(const list<PathPoint*>& list, const PathPoint* point)
 }
 
 bool Astar::canreach(const PathPoint* point, const PathPoint* target) {
-	if (target->x<0 || target->x>width - 1
-		|| target->y<0 || target->y>length - 1
+	if (target->x<=0 || target->x>=width - 1
+		|| target->y<=0 || target->y>=length - 1
 		|| calmaze[target->x][target->y] == 'X'
 		|| (target->x == point->x && target->y == point->y)
 		|| isinlist(closelist, target)) {

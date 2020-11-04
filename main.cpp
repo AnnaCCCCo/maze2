@@ -1,7 +1,9 @@
 #include <iostream>
 #include <stdlib.h>
 #include <Windows.h>
+#include <time.h>
 #include <fstream>
+#include <strstream>
 #include <string>
 #include <vector>
 #include "array.h"
@@ -126,6 +128,7 @@ void generate() {
 			cin >> anP;
 		}
 	}
+	maze.printArray();
 	cout << endl << "Do you want to save the maze?(y/n)";
 	cin >> anS;
 	while (1) {
@@ -184,6 +187,61 @@ void loadFile() {
 	}
 }
 
+void generate100() {
+	for (int i = 100; i < 100; i++) {
+		Sleep(1000);
+		srand((unsigned)time(NULL));
+		int randw = rand() % 11 + 20;
+		int randl = rand() % 41 + 20;
+		int rande = rand() % 3 + 2;
+
+		maze.createArray(randw, randl);
+		maze.assignArray();
+		maze.generater(rande);
+		maze.printArray();
+
+		astar.initAstar(maze.storage, randw, randl);
+		while (maze.entrances.size()) {
+			astar.entrances.push_back(PathPoint(maze.entrances[0].x, maze.entrances[0].y));
+			maze.entrances.erase(maze.entrances.begin());
+		}
+		PathPoint end(randw / 2, randl / 2);
+
+		while (astar.entrances.size()) {
+			PathPoint start = astar.entrances[0];
+			list<PathPoint*>path = astar.getPath(start, end);
+			for (auto& p : path) {
+				if (maze.storage[p->x][p->y] == ' ') {
+					maze.storage[p->x][p->y] = 'o';
+				}
+			}
+			astar.entrances.erase(astar.entrances.begin());
+		}
+
+		ofstream outfile;
+		string FileName = "C:\\Users\\67403\\Desktop\\test\\100\\";
+		string s;
+		strstream ss;
+		ss << i;
+		ss >> s;
+		FileName += s;
+		FileName += ".txt";
+		outfile.open(FileName);
+		for (int a = 0; a < randw; a++) {
+			for (int b = 0; b < randl; b++) {
+				if (maze.storage[a][b] != ' ') {
+					outfile << maze.storage[a][b];
+				}
+				else {
+					outfile << " ";
+				}
+			}
+			outfile << endl;
+		}
+		outfile.close();
+	}
+}
+
 void mainMenu() {
 	int choose;
 	cout << "Welcome to use the MAZE program." << endl;
@@ -201,6 +259,8 @@ void mainMenu() {
 		generate(); break;
 	case 2:
 		loadFile(); break;
+	case 3:
+		generate100(); break;
 	}
 }
 
